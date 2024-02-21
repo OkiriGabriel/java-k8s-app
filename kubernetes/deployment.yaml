@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-boot-app
+  labels:
+    tags.datadoghq.com/env: dev
+    tags.datadoghq.com/service: java-app
+    tags.datadoghq.com/version: "0.0.1"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spring-boot-app
+  template:
+    metadata:
+      labels:
+        app: spring-boot-app
+        tags.datadoghq.com/env: dev
+        tags.datadoghq.com/service: java-app
+        tags.datadoghq.com/version: "0.0.1"
+    spec:
+      containers:
+      - name: spring-boot-app
+        image: gabeokiri/spring-petclinic:v2
+        env:
+        - name: DD_INTEGRATION_JDBC-DATASOURCE_ENABLED
+          value: "true"
+        - name: DD_DBM_PROPAGATION_MODE
+          value: "full"
+        - name: DD_TRACE_ENABLED
+          value: "true"
+        - name: DD_TRACE_SAMPLE_RATE
+          value: "1"
+        - name: DD_PROFILING_ENABLED
+          value: "true"
+        - name: DD_LOGS_INJECTION
+          value: "true"
+
+        # Add other environment variables as needed
+        # (e.g., database connection details, Datadog API key)
+      - name: datadog-agent
+        image: gcr.io/datadoghq/agent:latest
+        env:
+        - name: DD_API_KEY
+          value: 8566e1e03d30050853f87af19d75aebc
+        # Add other Datadog Agent configuration as needed
+        volumeMounts:
+        - name: dockersocketdir
+          mountPath: /var/run/docker.sock
+          readOnly: true
+      volumes:
+      - name: dockersocketdir
+        hostPath:
+          path: /var/run/docker.sock
+      imagePullSecrets:
+      - name: myregistrykey
+      initContainers:  # Add the init container definition here
+      - name: datadog-lib-js-init
+        image: gcr.io/datadoghq/dd-lib-js-init:latest
+        imagePullPolicy: IfNotPresent # Set the image pull policy for the init container
+
+# dckr_pat_-W5Sv1omFofAXgwaErQMjYF5ses
+# kubectl create secret generic myregistrykey  --from-literal=kubernetes=dckr_pat_-W5Sv1omFofAXgwaErQMjYF5ses
+
+
+

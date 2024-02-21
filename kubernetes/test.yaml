@@ -1,0 +1,104 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: node-app
+  labels:
+    tags.datadoghq.com/env: "dev"
+    tags.datadoghq.com/service: "my-nodejs-app"
+    tags.datadoghq.com/version: "0.0.1"
+  annotations:
+    admission.datadoghq.com/js-lib.version: "v1"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: node-app
+  template:
+    metadata:
+      labels:
+        app: node-app
+        tags.datadoghq.com/env: "dev"
+        tags.datadoghq.com/service: "my-nodejs-app"
+        tags.datadoghq.com/version: "0.0.1"
+      annotations:
+        admission.datadoghq.com/enabled: "true"
+    spec:
+      hostNetwork: true  
+      containers:
+      - name: node-app
+        image: opeyemiadeniji/node-admission-controller:v1
+        env:
+          - name: DD_ENV
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.labels['tags.datadoghq.com/env']
+          - name: DD_SERVICE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.labels['tags.datadoghq.com/service']
+          - name: DD_VERSION
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.labels['tags.datadoghq.com/version']
+          - name: DD_LOGS_INJECTION
+            value: "true"
+      imagePullSecrets:
+      - name: myregistrykey
+      initContainers:  # Add the init container definition here
+      - name: datadog-lib-js-init
+        image: gcr.io/datadoghq/dd-lib-js-init:latest
+        imagePullPolicy: IfNotPresent  # Set the image pull policy for the init container
+
+
+
+
+
+
+CREATE DATABASE prestashop_db;
+CREATE USER 'prestashop_user'@'%' IDENTIFIED BY 'password';
+GRANT ALL PRIVILEGES ON prestashop_db.* TO 'prestashop_user'@'%';
+FLUSH PRIVILEGES;
+	adenijikehinde00@gmail.com
+  Adeynyke00
+
+
+
+import 'package:flutter/material.dart';
+import 'package:flutter_datadog_plugin/flutter_datadog_plugin.dart';
+
+void main() {
+  FlutterDatadogPlugin.instance.init(
+    apiKey: '<DATADOG_API_KEY>',
+    appKey: '<DATADOG_APP_KEY>',
+  );
+  
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  //...
+}
+
+class MyPage extends StatefulWidget {
+  //...  
+}
+
+class _MyPageState extends State<MyPage> {
+
+  void _trackLoginEvent() {
+    // Create login event
+    FlutterDatadogPlugin.instance.logEvent(
+      eventName: 'UserLogin',
+      attributes: {
+        'username': 'xyz123',
+        'status': 'success'
+      },
+      tags: [
+        'env:prod',
+        'version:1.0.0'
+      ]  
+    );
+  }
+  
+  //...
+}

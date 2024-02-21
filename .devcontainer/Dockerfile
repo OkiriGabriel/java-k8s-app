@@ -9,5 +9,8 @@ VOLUME /home/$USER/.m2
 VOLUME /home/$USER/.gradle
 
 ARG JAVA_VERSION=17.0.7-ms
+# RUN curl -Lo dd-java-agent.jar 'https://dtdg.co/latest-java-tracer'
+
 RUN sudo mkdir /home/$USER/.m2 /home/$USER/.gradle && sudo chown $USER:$USER /home/$USER/.m2 /home/$USER/.gradle
 RUN bash -lc '. /usr/local/sdkman/bin/sdkman-init.sh && sdk install java $JAVA_VERSION && sdk use java $JAVA_VERSION'
+# ENTRYPOINT ["java" , "-javaagent:/dd-java-agent.jar", "-Ddd.trace.sample.rate=1", "-jar" , "targets/spring-petclinic-3.2.0-SNAPSHOT.jarr"]
