@@ -90,8 +90,8 @@ class _MyPageState extends State<MyPage> {
     FlutterDatadogPlugin.instance.logEvent(
       eventName: 'UserLogin',
       attributes: {
-        'username': 'xyz123',
-        'status': 'success'
+        'username': 'xxx',
+        'status': 'succxxxxess'
       },
       tags: [
         'env:prod',

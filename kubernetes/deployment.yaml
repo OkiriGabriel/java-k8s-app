@@ -42,7 +42,7 @@ spec:
         image: gcr.io/datadoghq/agent:latest
         env:
         - name: DD_API_KEY
-          value: 8566e1e03d30050853f87af19d75aebc
+          value: xxxxxxxxxxxxx
         # Add other Datadog Agent configuration as needed
         volumeMounts:
         - name: dockersocketdir
